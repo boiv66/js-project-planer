@@ -18,8 +18,8 @@ class domMover{
     }
 }
 class ProjectList{
-    projectList = []; 
-
+    projectList = [];
+    
     constructor(type){
         this.type = type; 
         const projItem = document.querySelectorAll(`#${type}-projects li`);
@@ -54,8 +54,14 @@ class ProjectList{
 
 class Tooltip{
 
+    constructor(closeNotiFunc){
+        this.closeNotiFunc = closeNotiFunc; 
+
+
+    }
     hide = () => {
         this.noteEl.remove();
+        this.closeNotiFunc();
 
 
     }
@@ -72,6 +78,8 @@ class Tooltip{
 }
 
 class Project{
+    hasTooltip = false;
+
     constructor(id, switchHandlerFunc, type){
         this.id = id; 
         this.switchHandler = switchHandlerFunc; 
@@ -89,8 +97,13 @@ class Project{
     }
 
     showMoreInfo(){
-        const tooltip = new Tooltip(); 
-        tooltip.display();
+        if(!this.hasTooltip){
+            const tooltip = new Tooltip(() => this.hasTooltip = false); 
+            tooltip.display();
+            this.hasTooltip = true;
+        }
+
+         
 
     }
 
