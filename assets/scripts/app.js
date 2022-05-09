@@ -54,8 +54,9 @@ class ProjectList{
 
 class Tooltip{
 
-    constructor(closeNotiFunc){
+    constructor(closeNotiFunc, text){
         this.closeNotiFunc = closeNotiFunc; 
+        this.text = text; 
 
 
     }
@@ -69,7 +70,7 @@ class Tooltip{
         console.log('the tooltip...');
         const tooltipEl = document.createElement('div'); 
         tooltipEl.className = 'card';
-        tooltipEl.textContent = 'Add note here...'; 
+        tooltipEl.textContent = this.text; 
         this.noteEl = tooltipEl; 
         tooltipEl.addEventListener('click', this.hide ); 
         document.body.append(tooltipEl); 
@@ -98,18 +99,22 @@ class Project{
 
     showMoreInfo(){
         if(!this.hasTooltip){
-            const tooltip = new Tooltip(() => this.hasTooltip = false); 
+           
+            console.log(this); 
+            const projEl = document.getElementById(this.id); 
+            const projDataExtraInfo = projEl.dataset.extraInfo; 
+            console.log(projDataExtraInfo); 
+            const tooltip = new Tooltip(() => this.hasTooltip = false, projDataExtraInfo); 
             tooltip.display();
             this.hasTooltip = true;
         }
 
-         
-
+        
     }
 
     addEventForMoreInfoButton(){
         const moreInfoButton = document.querySelector(`#${this.id} button`); 
-        moreInfoButton.addEventListener('click', this.showMoreInfo); 
+        moreInfoButton.addEventListener('click', this.showMoreInfo.bind(this)); 
     }
     
     updateType(updateProjectFunc, type){
