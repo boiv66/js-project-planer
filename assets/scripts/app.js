@@ -1,5 +1,15 @@
  
+class Component{
+    constructor(hostEl){
+        if (!hostEl){
+            this.hostEl = document.body; 
+        }
+        else{
+            this.hostEl = document.getElementById(hostEl); 
+        }
 
+    }
+}
 class domMover{
     static moveElement(elId, newDes){
         const el = document.getElementById(elId); 
@@ -52,9 +62,10 @@ class ProjectList{
 
 }
 
-class Tooltip{
+class Tooltip extends Component{
 
-    constructor(closeNotiFunc, text){
+    constructor(closeNotiFunc, text, hostEl){
+        super(hostEl);
         this.closeNotiFunc = closeNotiFunc; 
         this.text = text; 
 
@@ -67,13 +78,32 @@ class Tooltip{
 
     }
     display(){
-        console.log('the tooltip...');
         const tooltipEl = document.createElement('div'); 
         tooltipEl.className = 'card';
         tooltipEl.textContent = this.text; 
+
+
+        const hostLeftPos = this.hostEl.offsetLeft; 
+        const hostTopPos = this.hostEl.offsetTop; 
+        const hostHeight = this.hostEl.offsetHeight;
+        const scrollParent = this.hostEl.parentElement.scrollTop; 
+        
+        // value here is always pixel 
+        const tooltipX = hostLeftPos + 20; 
+        const tooltipY = hostHeight + hostTopPos  - scrollParent - 10;
+        
+        tooltipEl.style.left = tooltipX + 'px'; 
+        tooltipEl.style.top = tooltipY + 'px'; 
+        tooltipEl.style.position = 'absolute'; 
+
+
+
+        // console.log("hostEl", this.hostEl); 
+
+        // console.log(this.hostEl.getBoundingClientRect()); 
         this.noteEl = tooltipEl; 
         tooltipEl.addEventListener('click', this.hide ); 
-        document.body.append(tooltipEl); 
+        this.hostEl.append(tooltipEl); 
     }
 
 }
@@ -104,7 +134,7 @@ class Project{
             const projEl = document.getElementById(this.id); 
             const projDataExtraInfo = projEl.dataset.extraInfo; 
             console.log(projDataExtraInfo); 
-            const tooltip = new Tooltip(() => this.hasTooltip = false, projDataExtraInfo); 
+            const tooltip = new Tooltip(() => this.hasTooltip = false, projDataExtraInfo, this.id); 
             tooltip.display();
             this.hasTooltip = true;
         }
